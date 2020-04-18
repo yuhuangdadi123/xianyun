@@ -68,15 +68,30 @@ export default {
             // valid如果值是true代表验证通过
             if(valid){
                 // this.form就是上面 账号跟密码的表单 已经填了的  把this.form传过去
-                // 调用actions的方法
-                this.$store.dispatch("user/login",this.form).then(()=>{
+                // 调用actions的方法   .then的参数res是上一个then的返回值决定的
+                this.$store.dispatch("user/login",this.form).then(data=>{
                     // 弹窗提示
-                    this.$message.success("登录成功");
+                    this.$message.success("登录成功！欢迎回来： " + data.user.nickname);
                     // 跳转到首页
                     this.$router.push("/")
                 })
                 }
             })
+
+
+            // this.$refs.form.validate(async (valid) => {
+            //     // valid如果值是true代表验证通过
+            //     if(valid){
+            //         // 调用actions的方法
+            //         await this.$store.dispatch("user/login", this.form);
+            //         // 弹窗提示
+            //         this.$message.success("登录成功");
+            //         // 跳转到首页
+            //         this.$router.push("/")
+            //     }
+            // })
+
+
         }
     }
 }

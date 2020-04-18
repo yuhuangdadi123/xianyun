@@ -24,7 +24,7 @@ export const actions = {
     login(store,data){
         // console.log(this);  打印this  就是store 下面 有个axios 所以可以直接用axios
         // 请求登录接口
-        this.$axios({
+         return this.$axios({
             url: "/accounts/login",
             method: "POST",
             data: data
@@ -33,10 +33,11 @@ export const actions = {
             const {data} = res;
             // 这个写法是错的
             // this.$store.state.user.userInfo = data;
-            
+
              // 通过store.commit调用mutations的方法
             // 由于是在同一个模块下，可以省略前面的user名字
             store.commit('user/setUserInfo', data);
+            return data
         })
     }
 }
