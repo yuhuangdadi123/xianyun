@@ -119,30 +119,35 @@ export default {
         // 发送验证码
         handleSendCaptcha(){
             // 如果手机号码为空，直接返回
-            if(this.form.username === ""){
+            if(this.form.username.trim() === ""){
                 // 主动的触发表单某个属性字段的校验，并且会主动发生错误提示
                 this.$refs.form.validateField("username");
                 return;
             }
-            // 请求发送验证码的接口
-            this.$axios({
-                url: "/captchas",
-                method: "POST",
-                data: {
-                    // 手机号码
-                    tel: this.form.username
-                }
-            }).then(res => {
-                // 接口主要调用成功了，都认为短信已经成功的发送到用户的手机上了
-                const {code} = res.data;
-                this.$message.success("模拟的验证码是: " + code)
+            this.$store.dispatch('user/sendCaptcha',this.form.username).then(res=>{
+                this.$message.success("模拟的验证码是: " + res)
             })
         },
 
 
         // 注册
         handleRegSubmit(){
-           console.log(this.form)
+           // 判断element的表单验证是否通过, element的表单都有一个validate这个方法
+            this.$refs.form.validate((valid) => {
+            // valid如果值是true代表验证通过
+                if(valid){
+                    // 删除this.form的checkPassword属性
+                    // 解构提取出某个属性，剩余的所有属性用other来表示
+                    const {checkPassword, ...other} = this.form;
+
+                    // 调用actions下的register方法
+                    this.$store.dispatch("user/register", other).then(res => {
+                        this.$message.success("恭喜你，注册成功");
+                        // 跳转到首页
+                        this.$router.push("/")
+                    })
+                }
+            })
         }
     }
 }
