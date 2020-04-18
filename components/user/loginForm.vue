@@ -67,7 +67,7 @@ export default {
         this.$refs.form.validate((valid) => {
             // valid如果值是true代表验证通过
             if(valid){
-                // this.form就是上面 账号跟密码的表单 已经填了的  把this.form传过去
+                // this.form就是上面 账号跟密码的表单 已经填了的                  把this.form传过去
                 // 调用actions的方法   .then的参数res是上一个then的返回值决定的
                 this.$store.dispatch("user/login",this.form).then(data=>{
                     // 弹窗提示

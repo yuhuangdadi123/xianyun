@@ -36,7 +36,7 @@ export const actions = {
 
              // 通过store.commit调用mutations的方法
             // 由于是在同一个模块下，可以省略前面的user名字
-            store.commit('user/setUserInfo', data);
+            store.commit('setUserInfo', data);
             return data
         })
     }
