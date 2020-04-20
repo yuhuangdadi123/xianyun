@@ -1,8 +1,10 @@
+// 浏览器会发出警告 说state应该是一个 方法/函数  所以用箭头函数
+
 // 存放仓库该分类（user）下的数据, export const state = {}是固定的格式
-export const state = {
+export const state =()=>({
     // 登录成功后接口返回的用户数据, 里面包含了token和用户的详细信息
     userInfo: {}
-};
+});
 
 // 修改state中的数据 export const mutations = {}是固定的格式
 // store的数据不能直接修改，必须要使用mutations来修改
