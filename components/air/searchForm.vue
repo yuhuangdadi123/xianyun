@@ -10,17 +10,23 @@
             </span>
         </el-row>
 
+        <!-- 机票搜索表单 -->
         <el-form class="search-form-content" ref="form" label-width="80px">
             <el-form-item label="出发城市">
                 <!-- fetch-suggestions 返回输入建议的方法 -->
                 <!-- select 点击选中建议项时触发 -->
+                <!-- fetch-suggestions :  获取建议  一旦输入框的文字发生了变化，就会触发queryDepartSearch这个事件
+                然后事件根据这个输入框的关键字去请求接口 接口返回的数据就显示在下拉列表里面 -->
+
                 <el-autocomplete
                 :fetch-suggestions="queryDepartSearch"
                 placeholder="请搜索出发城市"
                 @select="handleDepartSelect"
                 class="el-autocomplete"
+                v-model="form.departCity"
                 ></el-autocomplete>
             </el-form-item>
+
             <el-form-item label="到达城市">
                 <el-autocomplete
                 :fetch-suggestions="queryDestSearch"
@@ -29,6 +35,7 @@
                 class="el-autocomplete"
                 ></el-autocomplete>
             </el-form-item>
+
             <el-form-item label="出发时间">
                 <!-- change 用户确认选择日期时触发 -->
                 <el-date-picker type="date" 
@@ -37,6 +44,7 @@
                 @change="handleDate">
                 </el-date-picker>
             </el-form-item>
+
             <el-form-item label="">
                 <el-button style="width:100%;" 
                 type="primary" 
@@ -45,6 +53,7 @@
                     搜索
                 </el-button>
             </el-form-item>
+
             <div class="reverse">
                 <span @click="handleReverse">换</span>
             </div>
@@ -61,6 +70,9 @@ export default {
                 {icon: "iconfont iconshuangxiang", name: "往返"}
             ],
             currentTab: 0,
+            form:{
+                departCity:""
+            },
         }
     },
     methods: {
@@ -69,15 +81,40 @@ export default {
             
         },
         
+        // 监听出发城市输入框的变化，一旦输入框的文字发生了变化，就会触发该这个事件
+        // value是输入框的值 cb是函数必须要调用的
+        //cb接收的参数有个固定的格式，参数必须是一个数组，且数组里面每一项都必须是 对象，每个对象必须要有value
+        // 这里这个插件版本有问题，手动把element-ui的版本回退到2.12.0    执行命会覆盖  npm  install element-ui@2.12.0
+        queryDepartSearch(value, cb){
+            //如果value是空 就不请求
+            if(!value){return}
+            // 请求和value相关的文字
+            this.$axios({
+                url:"/airs/city",
+                params:{
+                    name:value
+                }
+            }).then(res=>{
+                // console.log(res);
+                const {data} = res.data;
+                // 因为cb里面的每个对象里面必须要有value 所以要map添加
+                // map必须要retur；！！！！！！！
+                const newData = data.map(v=>{
+                    v.value = v.name.replace('市','');
+                    return v;
+                });
+                cb(newData);
+            })
+        },
         // 出发城市输入框获得焦点时触发
         // value 是选中的值，cb是回调函数，接收要展示的列表
-        queryDepartSearch(value, cb){
-            cb([
-                {value: 1},
-                {value: 2},
-                {value: 3},
-            ]);
-        },
+        // queryDepartSearch(value, cb){
+        //     cb([
+        //         {value: 1},
+        //         {value: 2},
+        //         {value: 3},
+        //     ]);
+        // },
 
         // 目标城市输入框获得焦点时触发
         // value 是选中的值，cb是回调函数，接收要展示的列表
