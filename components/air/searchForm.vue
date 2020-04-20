@@ -11,8 +11,8 @@
         </el-row>
 
         <!-- 机票搜索表单 -->
-        <el-form class="search-form-content" ref="form" label-width="80px">
-            <el-form-item label="出发城市">
+        <el-form class="search-form-content" ref="form"  :model="form"  :rules="rules"  label-width="80px">
+            <el-form-item label="出发城市"  prop="departCity">
                 <!-- fetch-suggestions 返回输入建议的方法 -->
                 <!-- select 点击选中建议项时触发 -->
                 <!-- fetch-suggestions :  获取建议  一旦输入框的文字发生了变化，就会触发queryDepartSearch这个事件
@@ -28,7 +28,7 @@
                 ></el-autocomplete>
             </el-form-item>
 
-            <el-form-item label="到达城市">
+            <el-form-item label="到达城市" prop="destCity">
                 <el-autocomplete
                 :fetch-suggestions="queryDestSearch"
                 placeholder="请搜索到达城市"
@@ -39,12 +39,13 @@
                 ></el-autocomplete>
             </el-form-item>
 
-            <el-form-item label="出发时间">
+            <el-form-item label="出发时间"  prop="departDate">
                 <!-- change 用户确认选择日期时触发 -->
                  <!-- value-format 设置时间的格式 -->
                 <el-date-picker type="date" 
                 placeholder="请选择日期" 
                 style="width: 100%;"
+                align="right"
                 v-model="form.departDate"
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd"
@@ -94,6 +95,24 @@ export default {
                 return time.getTime() < Date.now() - 3600 * 1000 * 24;
                 }
             },
+            shortcuts: [{
+            text: '今天',
+            onClick(picker) {
+              picker.$emit('pick', new Date());
+                }
+            }],
+            // 表单的校验规则,trigger是随便填的，默认是blur，主要是blur交互我们觉得不好看，想覆盖掉这个功能
+            rules: {
+                departCity: [
+                    { required: true, message: "请选中出发城市", trigger: "abc" }
+                ],
+                destCity: [
+                    { required: true, message: "请选中到达城市", trigger: "abc"  }
+                ],
+                departDate: [
+                    { required: true, message: "请选中出发时间", trigger: "abc"  }
+                ]
+            }
         }
     },
     methods: {
@@ -109,6 +128,8 @@ export default {
         queryDepartSearch(value, cb){
             //如果value是空 就不请求
             if(!value){return}
+            // 监听输入框有值的时候重新验证表单，可以消除掉红的报错信息
+            this.$refs.form.validateField("departCity");
             // 请求和value相关的文字
             this.$axios({
                 url:"/airs/city",
@@ -143,6 +164,8 @@ export default {
         // value 是选中的值，cb是回调函数，接收要展示的列表
         queryDestSearch(value, cb){
              if(!value){return}
+            // 监听输入框有值的时候重新验证表单，可以消除掉红的报错信息
+            this.$refs.form.validateField("destCity");
             // 请求和value相关的文字
             this.$axios({
                 url:"/airs/city",
@@ -187,6 +210,7 @@ export default {
         // 确认选择日期时触发
         handleDate(value){
         //    console.log(value);
+        this.$refs.form.validateField("departDate");
         },
 
         // 触发和目标城市切换时触发
@@ -196,7 +220,18 @@ export default {
 
         // 提交表单是触发
         handleSubmit(){
-           
+           // 表单验证
+            this.$refs.form.validate(valid => {
+                if(valid){
+                    // console.log(this.form);
+                    // 路由跳转，path指定的路径，query属性指定的问号后面的参数
+                    // 如果是动态参数就使用params
+                    this.$router.push({
+                        path:'/air/flights',
+                        query: this.form
+                    })
+                }
+            })
         }
     },
     mounted() {
