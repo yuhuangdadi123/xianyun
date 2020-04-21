@@ -4,25 +4,25 @@
             <!-- 显示的机票信息 -->
             <el-row type="flex" align="middle" class="flight-info">
                 <el-col :span="6">
-                    <span>东航 </span> MU5316
+                    <span>{{data.airline_name}}</span> {{data.flight_no}}
                 </el-col>
                 <el-col :span="12">
                     <el-row type="flex" justify="space-between" class="flight-info-center">
                         <el-col :span="8" class="flight-airport">
-                            <strong>20:30</strong>
-                            <span>白云机场T1</span>
+                            <strong>{{data.dep_time}}</strong>
+                            <span>{{data.org_airport_name}} {{data.org_airport_quay}}</span>
                         </el-col>
                         <el-col :span="8" class="flight-time">
-                            <span>2时20分</span>
+                            <span>{{this.rankTime}}</span>
                         </el-col>
                         <el-col :span="8" class="flight-airport">
-                            <strong>22:50</strong>
-                            <span>虹桥机场T2</span>
+                            <strong>{{data.arr_time}}</strong>
+                            <span>{{data.dst_airport_name}} {{data.dst_airport_quay}}</span>
                         </el-col>
                     </el-row>
                 </el-col>
                 <el-col :span="6" class="flight-info-right">
-                    ￥<span class="sell-price">810</span>起
+                    ￥<span class="sell-price">{{data.base_price / 2}}</span>起
                 </el-col>
             </el-row>
         </div>
@@ -31,12 +31,18 @@
             <el-row type="flex"  justify="space-between" align="middle">
                 <el-col :span="4">低价推荐</el-col>
                 <el-col :span="20">
-                    <el-row type="flex" justify="space-between" align="middle" class="flight-sell">
+                    <el-row type="flex" 
+                    justify="space-between" 
+                    align="middle" 
+                    class="flight-sell"
+                    v-for="(item,index) in data.seat_infos"
+                    :key="index"
+                    >
                         <el-col :span="16" class="flight-sell-left">
-                            <span>经济舱</span> | 上海一诺千金航空服务有限公司
+                            <span>{{item.group_name}}</span> | {{item.supplierName}}
                         </el-col>
                         <el-col :span="5" class="price">
-                            ￥1345
+                            ￥{{item.par_price}}
                         </el-col>
                         <el-col :span="3" class="choose-button">
                             <el-button 
@@ -44,7 +50,7 @@
                             size="mini">
                             选定
                             </el-button>
-                            <p>剩余：83</p>
+                            <p>剩余：{{item.discount}}</p>
                         </el-col>
                     </el-row>
                 </el-col>
@@ -55,13 +61,43 @@
 
 <script>
 export default {
-
+    // props:['data]
+    // props声明为对象的好处，
+    // 1.可以声明类型，避免类型错误，但是不能阻止
+    // 2.如果使用组件的时候不传该属性，可以有默认值
     props: {
         // 数据
         data: {
+            //类型
             type: Object,
-            // 默认是空数组
+            // 默认是空对象
             default: {}
+        }
+    },
+    computed:{
+        //相隔时间
+        rankTime(){
+            const arr =  this.data.arr_time; //假如到达时间是 12:50
+            const dep =  this.data.dep_time; //假如出发时间是 10:30
+
+            const end = arr.split(":");  //[12,50] 
+            const start = dep.split(":");//[10,30]
+
+            //如果到达时间的小时 小于 出发时间的小时 ，那么就表示到达时间是第二天
+            //必须是飞行时间不能超过24小时（意思飞机飞了一整天以上 24小时+  现实生活不存在这个条件 ）
+            if(end[0]<start[0]){
+                end[0] =  +end[0] + 24;
+            }
+
+            // 注意 end[1] 是一个字符串   前面用个 +  强制转换为数字
+            const dis = ( end[0] * 60 + +end[1] ) - ( start[0] * 60 + +start[1] );
+
+            // 小时
+            const hours = Math.floor(dis/60);
+            // 分钟
+            const min = dis % 60;
+
+            return `${hours}小时${min}分钟`
         }
     }
 }
