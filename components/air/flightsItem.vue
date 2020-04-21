@@ -13,7 +13,7 @@
                             <span>{{data.org_airport_name}} {{data.org_airport_quay}}</span>
                         </el-col>
                         <el-col :span="8" class="flight-time">
-                            <span>{{this.rankTime}}</span>
+                            <span>{{rankTime}}</span>
                         </el-col>
                         <el-col :span="8" class="flight-airport">
                             <strong>{{data.arr_time}}</strong>
@@ -21,6 +21,7 @@
                         </el-col>
                     </el-row>
                 </el-col>
+                <!-- 取的最低价格 -->
                 <el-col :span="6" class="flight-info-right">
                     ￥<span class="sell-price">{{data.base_price / 2}}</span>起
                 </el-col>
@@ -39,10 +40,10 @@
                     :key="index"
                     >
                         <el-col :span="16" class="flight-sell-left">
-                            <span>{{item.group_name}}</span> | {{item.supplierName}}
+                            <span>{{item.name}}</span> | {{item.supplierName}}
                         </el-col>
                         <el-col :span="5" class="price">
-                            ￥{{item.par_price}}
+                            ￥{{item.settle_price}}
                         </el-col>
                         <el-col :span="3" class="choose-button">
                             <el-button 
@@ -69,7 +70,6 @@ export default {
 
 
     },
-
 
     // props:['data]
     // props声明为对象的好处，

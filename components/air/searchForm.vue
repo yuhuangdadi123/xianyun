@@ -234,7 +234,12 @@ export default {
 
         // 触发和目标城市切换时触发
         handleReverse(){
-            
+            const {departCity, departCode, destCity, destCode} = this.form;
+            // 交叉赋值
+            this.form.destCity = departCity;
+            this.form.destCode = departCode;
+            this.form.departCity = destCity;
+            this.form.departCode = destCode; 
         },
 
         // 提交表单是触发

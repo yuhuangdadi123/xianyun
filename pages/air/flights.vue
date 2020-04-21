@@ -78,10 +78,10 @@ export default {
             url:"/airs",
             params:this.$route.query,
         }).then(res=>{
-            //console.log(res);  //res.data 里面有 flights  info  options 这三组大数据
+            console.log(res);  //res.data 里面有 flights  info  options 这三组大数据
             // 把这个大数据 给data里面的flightsData  所以flightsData是一个对象
             this.flightsData = res.data;
-            //请求完成后切割出第一页的数据  flightsData.flights是机票列表的数组
+            //请求完成后切割出第一页的数据  flightsData.flights是机票列表的数组   第一页就0-5 这5条数据 因为slice不会拿到索引5
 
             //数组的slice方法 例如arr[1,2,3,4]  arr.slice(0,2)  
             // 返回索引0-2之间的元素 不包含索引2那一项  返回的是一个数组[0,1]    不会改变原数组 
