@@ -78,7 +78,7 @@ export default {
             url:"/airs",
             params:this.$route.query,
         }).then(res=>{
-            console.log(res);  //res.data 里面有 flights  info  options 这三组大数据
+            //console.log(res);  //res.data 里面有 flights  info  options 这三组大数据
             // 把这个大数据 给data里面的flightsData  所以flightsData是一个对象
             this.flightsData = res.data;
             //请求完成后切割出第一页的数据  flightsData.flights是机票列表的数组
@@ -94,7 +94,10 @@ export default {
     methods:{
         //切换条数时触发的事件
         handleSizeChange(val) {
-            console.log(`每页 ${val} 条`);
+            // console.log(`每页 ${val} 条`);
+            this.pageSize = val;
+            //切换页数时重新切割数组
+            this.dataList = this.flightsData.flights.slice( (this.pageIndex-1)*this.pageSize , this.pageIndex * this.pageSize )
         },
         //切换页数时触发的事件
         handleCurrentChange(val) {
