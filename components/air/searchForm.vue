@@ -93,14 +93,30 @@ export default {
             pickerOptions: {
                 disabledDate(time) {
                 return time.getTime() < Date.now() - 3600 * 1000 * 24;
-                }
-            },
+                },
             shortcuts: [{
             text: '今天',
             onClick(picker) {
               picker.$emit('pick', new Date());
                 }
-            }],
+            }, {
+            text: '明天',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() + 3600 * 1000 * 24);
+              picker.$emit('pick', date);
+                }
+            },
+            {
+            text: '一周后',
+            onClick(picker) {
+              const date = new Date();
+              date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', date);
+                }
+            }
+            ],
+        },
             // 表单的校验规则,trigger是随便填的，默认是blur，主要是blur交互我们觉得不好看，想覆盖掉这个功能
             rules: {
                 departCity: [
@@ -116,22 +132,10 @@ export default {
         }
     },
     methods: {
-        // tab切换时触发
-        handleSearchTab(item, index){
-            
-        },
-        
-        // 监听  出发城市  输入框的变化，一旦输入框的文字发生了变化，就会触发该这个事件
-        // value是输入框的值 cb是函数必须要调用的
-        //cb接收的参数有个固定的格式，参数必须是一个数组，且数组里面每一项都必须是 对象，每个对象必须要有value
-        // 这里这个插件版本有问题，手动把element-ui的版本回退到2.12.0    执行命会覆盖  npm  install element-ui@2.12.0
-        queryDepartSearch(value, cb){
-            //如果value是空 就不请求
-            if(!value){return}
-            // 监听输入框有值的时候重新验证表单，可以消除掉红的报错信息
-            this.$refs.form.validateField("departCity");
+        //封装请求城市
+        getCity(value){
             // 请求和value相关的文字
-            this.$axios({
+            return this.$axios({
                 url:"/airs/city",
                 params:{
                     name:value
@@ -145,10 +149,34 @@ export default {
                     v.value = v.name.replace('市','');
                     return v;
                 });
-                // 保存到data中，给blur事件使用，失去焦点选择第一个
-                this.departCities = newData;
-                // cb是函数必须要调用的
-                cb(newData);
+                return newData;
+            })
+        },
+
+
+        // tab切换时触发
+        handleSearchTab(item, index){
+            
+        },
+        
+        // 监听  出发城市  输入框的变化，一旦输入框的文字发生了变化，就会触发该这个事件
+        // value是输入框的值 cb是函数必须要调用的
+        //cb接收的参数有个固定的格式，参数必须是一个数组，且数组里面每一项都必须是 对象，每个对象必须要有value
+        // 这里这个插件版本有问题，手动把element-ui的版本回退到2.12.0    执行命会覆盖  npm  install element-ui@2.12.0
+        queryDepartSearch(value, cb){
+            //如果value是空 就不请求
+            if(!value){
+                cb([])
+                this.departCities=[];
+                return
+                }
+            // 监听输入框有值的时候重新验证表单，可以消除掉红的报错信息
+            this.$refs.form.validateField("departCity");
+            this.getCity(value,cb).then(res=>{
+            // 保存到data中，给blur事件使用，失去焦点选择第一个
+            this.departCities = newData;
+            // cb是函数必须要调用的
+            cb(newData);
             })
         },
         
@@ -163,7 +191,11 @@ export default {
         //  目标城市  输入框获得焦点时触发
         // value 是选中的值，cb是回调函数，接收要展示的列表
         queryDestSearch(value, cb){
-             if(!value){return}
+             if(!value){
+                cb([])
+                this.destCities=[];
+                return
+                }
             // 监听输入框有值的时候重新验证表单，可以消除掉红的报错信息
             this.$refs.form.validateField("destCity");
             // 请求和value相关的文字
