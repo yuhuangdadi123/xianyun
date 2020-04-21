@@ -172,7 +172,7 @@ export default {
                 }
             // 监听输入框有值的时候重新验证表单，可以消除掉红的报错信息
             this.$refs.form.validateField("departCity");
-            this.getCity(value,cb).then(res=>{
+            this.getCity(value,cb).then(newData=>{
             // 保存到data中，给blur事件使用，失去焦点选择第一个
             this.departCities = newData;
             // cb是函数必须要调用的
@@ -199,20 +199,7 @@ export default {
             // 监听输入框有值的时候重新验证表单，可以消除掉红的报错信息
             this.$refs.form.validateField("destCity");
             // 请求和value相关的文字
-            this.$axios({
-                url:"/airs/city",
-                params:{
-                    name:value
-                }
-            }).then(res=>{
-                // console.log(res);
-                const {data} = res.data;
-                // 因为cb里面的每个对象里面必须要有value 所以要map添加
-                // map必须要retur；！！！！！！！
-                const newData = data.map(v=>{
-                    v.value = v.name.replace('市','');
-                    return v;
-                });
+            this.getCity(value,cb).then(newData=>{
                 // 保存到data中，给blur事件使用，失去焦点选择第一个
                 this.destCities = newData;
                 // cb是函数必须要调用的
@@ -221,7 +208,7 @@ export default {
         },
        // 到达城市 输入框失去焦点事件
         handleDestBlur(){
-            if(this.departCities.length>0){
+            if(this.destCities.length > 0){
                 this.form.destCity = this.destCities[0].value;
                 this.form.destCode = this.destCities[0].sort;
             }
