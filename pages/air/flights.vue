@@ -6,7 +6,7 @@
             <div class="flights-content">
                 <!-- 过滤条件 -->
                 <div>
-                    <FlightsFilters/>
+                    <FlightsFilters :data="flightsData" @getData="getData"/>
                 </div>
                 
                 <!-- 航班头部布局 -->
@@ -58,7 +58,9 @@ export default {
         return {
             //res.data 赋值出的 总数据 里面有 flights  info  options 这三组大数据
             flightsData:{
-               flights:[] 
+                info:{},
+               flights:[],
+               options:{}
             },
             //新建一个 专门用来存放 用slice切割出来的数组,把切割的数组用来渲染机票列表，达到分页效果
             //所以上面机票列表v-for 是循环 dataList
@@ -97,13 +99,19 @@ export default {
 
             //数组的slice方法 例如arr[1,2,3,4]  arr.slice(0,2)  
             // 返回索引0-2之间的元素 不包含索引2那一项  返回的是一个数组[0,1]    不会改变原数组 
-            // this.dataList = this.flightsData.flights.slice(0,this.pageSize);
+            // this.dataList = this.flightsData.flights.slice(0,this.pageSize);    不能赋值来改computed的值
 
             //总条数
             this.total = this.flightsData.total;
         })
     },
     methods:{
+        //这个事件传递给过滤的子组件用于获取过滤后的数组
+        getData(arr){
+            //又因为computed 监听到this.flightsData.flights 的变化  会重新刷新数组
+            this.flightsData.flights = arr;
+        },
+
         //切换条数时触发的事件
         handleSizeChange(val) {
             // console.log(`每页 ${val} 条`);
