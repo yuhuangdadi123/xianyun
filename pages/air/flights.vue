@@ -123,6 +123,7 @@ export default {
         getData(arr){
             //又因为computed 监听到this.flightsData.flights 的变化  会重新刷新数组
             this.flightsData.flights = arr;
+            this.total=arr.length;
         },
 
         //切换条数时触发的事件
