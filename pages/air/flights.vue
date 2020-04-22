@@ -6,7 +6,7 @@
             <div class="flights-content">
                 <!-- 过滤条件 -->
                 <div>
-                    
+                    <FlightsFilters/>
                 </div>
                 
                 <!-- 航班头部布局 -->
@@ -51,6 +51,7 @@
 <script>
 import FlightsListHead from "@/components/air/flightsListHead.vue"
 import FlightsItem from "@/components/air/flightsItem.vue"
+import FlightsFilters from "@/components/air/flightsFilters.vue"
 
 export default {
     data(){
@@ -72,7 +73,8 @@ export default {
     },
     components: {
         FlightsListHead,
-        FlightsItem
+        FlightsItem,
+        FlightsFilters
     },
     // 把机票列表提取到computed 监听   切换页数 条数 就可以监听到  记得return 因为要赋值的
     // dataList 相当于赋值  一开始axios还没请求到  赋值的时候没找到值，就undefined，所以要给flights一个默认值；
@@ -95,7 +97,7 @@ export default {
 
             //数组的slice方法 例如arr[1,2,3,4]  arr.slice(0,2)  
             // 返回索引0-2之间的元素 不包含索引2那一项  返回的是一个数组[0,1]    不会改变原数组 
-            this.dataList = this.flightsData.flights.slice(0,this.pageSize);
+            // this.dataList = this.flightsData.flights.slice(0,this.pageSize);
 
             //总条数
             this.total = this.flightsData.total;
