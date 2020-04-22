@@ -95,7 +95,24 @@ export default {
     },
 
     computed:{
+        // computed的属性如果没有应用函数是不会执行的
         filter(){
+            // 其他写法：自己思考，看不懂也无所谓
+            // const filters = [
+            //     { key: "airline_name", value: this.company },
+            //     { key: "plane_size", value: this.airSize }
+            // ]
+            // // 过滤有值的条件加入到筛选
+            // const hasFilters = filters.filter(v => { return v.value });
+            // const arr = this.data.flights.filter(v => {
+            //     const valid = hasFilters.every(item => {
+            //         return v[item.key] === item.value;
+            //     })
+            //     return valid;
+            // })
+            // this.$emit("getData", arr);
+
+
             const arr = this.data.flights.filter(v => {
                 // 先默认所有的航班都是符合条件的
                 let valid = true;
