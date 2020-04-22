@@ -56,10 +56,12 @@ export default {
     data(){
         return {
             //res.data 赋值出的 总数据 里面有 flights  info  options 这三组大数据
-            flightsData:{},
+            flightsData:{
+               flights:[] 
+            },
             //新建一个 专门用来存放 用slice切割出来的数组,把切割的数组用来渲染机票列表，达到分页效果
             //所以上面机票列表v-for 是循环 dataList
-            dataList:[],
+            // dataList:[],
             //当前页数
             pageIndex:1,
             //当前页面条数
@@ -71,6 +73,14 @@ export default {
     components: {
         FlightsListHead,
         FlightsItem
+    },
+    // 把机票列表提取到computed 监听   切换页数 条数 就可以监听到  记得return 因为要赋值的
+    // dataList 相当于赋值  一开始axios还没请求到  赋值的时候没找到值，就undefined，所以要给flights一个默认值；
+    computed:{
+        dataList(){
+            const arr = this.flightsData.flights.slice( (this.pageIndex-1)*this.pageSize , this.pageIndex * this.pageSize );
+            return arr;
+        }
     },
     mounted(){
         // 请求机票列表
@@ -95,17 +105,14 @@ export default {
         //切换条数时触发的事件
         handleSizeChange(val) {
             // console.log(`每页 ${val} 条`);
+            // 都会触发 computed 监听
             this.pageSize = val;
-            //切换页数时重新切割数组
-            this.dataList = this.flightsData.flights.slice( (this.pageIndex-1)*this.pageSize , this.pageIndex * this.pageSize )
         },
         //切换页数时触发的事件
         handleCurrentChange(val) {
             // console.log(`当前页: ${val}`);
-            //修改页数
+            //修改页数  都会触发 computed 监听
             this.pageIndex = val;
-            //切换页数时重新切割数组
-            this.dataList = this.flightsData.flights.slice( (this.pageIndex-1)*this.pageSize , this.pageIndex * this.pageSize )
         }
 
 
