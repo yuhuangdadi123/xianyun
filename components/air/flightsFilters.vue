@@ -20,6 +20,8 @@
             </el-col>
             <el-col :span="4">
                 <el-select size="mini" v-model="flightTimes"  placeholder="起飞时间" @change="handleFlightTimes">
+                    <!-- option的value不能放对象类型包括数组，但是需要知道当前 
+                    选中的是哪个时间段，所以就在value属性中拼接了一个字符串 -->
                     <el-option
                      v-for="(item,index) in data.options.flightTimes"
                     :key="index"

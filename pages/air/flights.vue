@@ -6,7 +6,7 @@
             <div class="flights-content">
                 <!-- 过滤条件 -->
                 <div>
-                    <FlightsFilters :data="flightsData" @getData="getData"/>
+                    <FlightsFilters :data="flightDataCache" @getData="getData"/>
                 </div>
                 
                 <!-- 航班头部布局 -->
@@ -62,6 +62,13 @@ export default {
                flights:[],
                options:{}
             },
+            // 备份一个数据，这个数据一旦被赋值后永远都不能被修改（原图）
+            // 备份一份 大数据  给筛选组件，然后筛选数组的赋值是给原份，如果再次筛选给的还是备份的大数据，而不是给的筛选过后的数据
+            flightDataCache: {
+                info: {},
+                flights: [],
+                options: {}
+            },
             //新建一个 专门用来存放 用slice切割出来的数组,把切割的数组用来渲染机票列表，达到分页效果
             //所以上面机票列表v-for 是循环 dataList
             // dataList:[],
@@ -96,6 +103,12 @@ export default {
             // 把这个大数据 给data里面的flightsData  所以flightsData是一个对象
             this.flightsData = res.data;
             //请求完成后切割出第一页的数据  flightsData.flights是机票列表的数组   第一页就0-5 这5条数据 因为slice不会拿到索引5
+
+            //因为 var a = c   var b = c   内存地址一样 通过a把c改了  b的c也会被改了 ，所以把对象解构出来放在另外一个对象里面
+            // 相当于给了一个新的内存地址
+            // 备份一份起来, 这份不能被修改, 因为是引用类型内存地址是一样的所以需要拷贝一份
+            this.flightDataCache = {...res.data};
+
 
             //数组的slice方法 例如arr[1,2,3,4]  arr.slice(0,2)  
             // 返回索引0-2之间的元素 不包含索引2那一项  返回的是一个数组[0,1]    不会改变原数组 
