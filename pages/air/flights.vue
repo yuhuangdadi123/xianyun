@@ -101,7 +101,7 @@ export default {
         this.getList();
     },
     //路由守卫
-    // 文档地址：
+    // 文档地址：https://router.vuejs.org/zh/guide/advanced/navigation-guards.html#组件内的守卫
     beforeRouteUpdate (to, from, next) {
         // 在当前路由改变，但是该组件被复用时调用
         //next必须执行的函数
