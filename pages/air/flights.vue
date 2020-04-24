@@ -92,7 +92,7 @@ export default {
     // dataList 相当于赋值  一开始axios还没请求到  赋值的时候没找到值，就undefined，所以要给flights一个默认值；
     computed:{
         dataList(){
-            const arr = this.flightsData.flights.slice( (this.pageIndex-1)*this.pageSize , this.pageIndex * this.pageSize );
+            const arr = this.flightsData.flights.slice((this.pageIndex-1)*this.pageSize,this.pageIndex*this.pageSize);
             return arr;
         }
     },

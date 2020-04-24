@@ -163,6 +163,14 @@ export default {
  
         // 撤销条件时候触发
         handleFiltersCancel(){
+            // 让这些属性都等于空 相当于没有去选择他们 就是撤销筛选
+            this.airport= "";   
+            this.flightTimes= "";
+            this.company= "";    
+            this.airSize= "";    
+            //再把父组件的data.flights 这个数组传回去  因为父组件那边接收的要得是一个数组，所以不能直接传data
+            this.$emit("getData",this.data.flights)
+            // console.log(this.data);
             
         },
     }
