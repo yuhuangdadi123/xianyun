@@ -8,7 +8,7 @@ import {Message} from "element-ui";
 
 // 暴露出一个函数
 export default (nuxt) => {
-    //  console.log(nuxt);  // 里面有$axios的方法
+    //  console.log(nuxt);  // 里面有$axios的方法  里面有redirect方法 可以实现跳转
 
     // onError在axios请求错误的时候才会触发， err是错误的对象
     nuxt.$axios.onError(err =>{
@@ -20,6 +20,11 @@ export default (nuxt) => {
         if(statusCode === 400){
             Message.error(message);
         }
+        if(statusCode === 403 || statusCode === 401){
+            Message.error("当前没有登录");
+            nuxt.redirect("/user/login");
+        }
+        
     })
 
 }

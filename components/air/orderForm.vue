@@ -114,7 +114,11 @@ export default {
     },
 
     mounted(){
+        // 获取问号的参数
         const {id , seat_xid} = this.$route.query;
+        // 把航班id和座位赋值给表单
+        this.form.air = id;
+        this.form.seat_xid = seat_xid;
         //根据航班id和座位的id来请求当前的机票详情
         this.$axios({
             url:"/airs/" + id,
@@ -157,7 +161,17 @@ export default {
 
         // 提交订单
         handleSubmit(){
-            console.log(this.form);
+            // console.log(this.form);
+            this.$axios({
+                url:"/airorders",
+                method:"post",
+                headers:{
+                    Authorization: `Bearer ` + this.$store.state.user.userInfo.token 
+                },
+                data:this.form,
+            }).then(res=>{
+                this.$message.success("订单提交成功")
+            })
         },
 
         // 点击保险的checkbox时候触发
