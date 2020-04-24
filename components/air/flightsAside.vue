@@ -22,7 +22,7 @@
 
         <div class="history">
             <h5>历史查询</h5>
-            <nuxt-link to="#"
+            <div
             v-for="(item,index) in $store.state.air.searchList"
             :key="index"
             @click="handleClick(item)">
@@ -36,7 +36,7 @@
                     </div>
                     <span>选择</span>
                 </el-row>
-            </nuxt-link>
+            </div>
         </div>
     </div>
 </template>
@@ -59,18 +59,18 @@ export default {
             //今天的日期  moment官方的写法
             const today = moment().format("YYYY-MM-DD");
             //去掉横杆比较大小， 例如 2020-04-22 有两个横杆 用正则的方法 变成20200422<20200424
-            const todayNum = +today.replace(/-/g,"");
-            const departDateNum = +data.departDate(/-/g,"");
+            const todayNum = +today.replace(/-/g, "");
+            const departDateNum = +data.departDate.replace(/-/g, "");
             //如果点击历史记录的时间小于今天 就把时间改为今天
-            if( departDateNum < todayNum ){
+            if( departDateNum < todayNum){
                 // item.departDate = today 会报错 因为不能直接修改vuex的数据 所以上面已经复制了一份
                 data.departDate = today;
             }//如果大于今天就跳过 不用改
             
             //跳转到当前点击的页面
             this.$router.push({
-                path:'/air/flights',
-                query:data
+                path: "/air/flights",
+                query: data
             })
         },
     }
