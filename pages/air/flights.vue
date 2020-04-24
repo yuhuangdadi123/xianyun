@@ -43,6 +43,7 @@
             <!-- 侧边栏 -->
             <div class="aside">
                 <!-- 侧边栏组件 -->
+                <FlightsAside/>
             </div>
         </el-row>
     </section>
@@ -52,6 +53,7 @@
 import FlightsListHead from "@/components/air/flightsListHead.vue"
 import FlightsItem from "@/components/air/flightsItem.vue"
 import FlightsFilters from "@/components/air/flightsFilters.vue"
+import FlightsAside from "@/components/air/flightsAside.vue"
 
 export default {
     data(){
@@ -83,7 +85,8 @@ export default {
     components: {
         FlightsListHead,
         FlightsItem,
-        FlightsFilters
+        FlightsFilters,
+        FlightsAside
     },
     // 把机票列表提取到computed 监听   切换页数 条数 就可以监听到  记得return 因为要赋值的
     // dataList 相当于赋值  一开始axios还没请求到  赋值的时候没找到值，就undefined，所以要给flights一个默认值；
@@ -99,7 +102,7 @@ export default {
             url:"/airs",
             params:this.$route.query,
         }).then(res=>{
-            console.log(res);  //res.data 里面有 flights  info  options 这三组大数据
+            //console.log(res);  //res.data 里面有 flights  info  options 这三组大数据
             // 把这个大数据 给data里面的flightsData  所以flightsData是一个对象
             this.flightsData = res.data;
             //请求完成后切割出第一页的数据  flightsData.flights是机票列表的数组   第一页就0-5 这5条数据 因为slice不会拿到索引5
