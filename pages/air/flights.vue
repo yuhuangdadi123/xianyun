@@ -98,6 +98,26 @@ export default {
     },
     mounted(){
         // 请求机票列表
+        this.getList();
+    },
+    //路由守卫
+    // 文档地址：
+    beforeRouteUpdate (to, from, next) {
+        // 在当前路由改变，但是该组件被复用时调用
+        //next必须执行的函数
+        next();
+        //一定要先跳转 再获取  如果获取后再跳转 会拿到上一次的数据
+        this.getList();
+    },
+    // watch:{
+    //     $route(){
+    //         // 一旦路由发生变化就会重新请求数据
+    //         this.getList();
+    //     }
+    // },
+    methods:{
+        getList(){
+        // 请求机票列表
         this.$axios({
             url:"/airs",
             params:this.$route.query,
@@ -112,7 +132,6 @@ export default {
             // 备份一份起来, 这份不能被修改, 因为是引用类型内存地址是一样的所以需要拷贝一份
             this.flightDataCache = {...res.data};
 
-
             //数组的slice方法 例如arr[1,2,3,4]  arr.slice(0,2)  
             // 返回索引0-2之间的元素 不包含索引2那一项  返回的是一个数组[0,1]    不会改变原数组 
             // this.dataList = this.flightsData.flights.slice(0,this.pageSize);    不能赋值来改computed的值
@@ -120,8 +139,9 @@ export default {
             //总条数
             this.total = this.flightsData.total;
         })
-    },
-    methods:{
+        },
+
+        //页面筛选过后传过来的数组
         //这个事件传递给过滤的子组件用于获取过滤后的数组
         getData(arr){
             //又因为computed 监听到this.flightsData.flights 的变化  会重新刷新数组
@@ -141,7 +161,6 @@ export default {
             //修改页数  都会触发 computed 监听
             this.pageIndex = val;
         }
-
 
     },
 

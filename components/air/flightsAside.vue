@@ -22,14 +22,17 @@
 
         <div class="history">
             <h5>历史查询</h5>
-            <nuxt-link to="#">
+            <nuxt-link to="#"
+            v-for="(item,index) in $store.state.air.searchList"
+            :key="index"
+            @click="handleClick(item)">
                 <el-row type="flex" 
                 justify="space-between" 
                 align="middle"
                 class="history-item">
                     <div class="air-info">
-                        <div class="to-from">广州 - 上海</div>
-                        <p>2019-06-16</p>
+                        <div class="to-from">{{item.departCity}} - {{item.destCity}}</div>
+                        <p>{{item.departDate}}</p>
                     </div>
                     <span>选择</span>
                 </el-row>
@@ -39,8 +42,38 @@
 </template>
 
 <script>
-export default {
+import moment from "moment";
 
+export default {
+    mounted(){
+        //在mounted 里面从本地拿数据需要  组件加载完了  本地的还没拿回来  所以直接在上面渲染 
+        //数据一旦发生变化  就会重新渲染  
+        //时间加载问题
+        //console.log(this.$store.state.air.searchList);
+    },
+    methods:{
+        //点击历史记录列表的事件
+        handleClick(item){
+            // 复制一份item  因为item是属于vuex的值 不能直接修改 只能通过mutations修改
+            const data = {...item}
+            //今天的日期  moment官方的写法
+            const today = moment().format("YYYY-MM-DD");
+            //去掉横杆比较大小， 例如 2020-04-22 有两个横杆 用正则的方法 变成20200422<20200424
+            const todayNum = +today.replace(/-/g,"");
+            const departDateNum = +data.departDate(/-/g,"");
+            //如果点击历史记录的时间小于今天 就把时间改为今天
+            if( departDateNum < todayNum ){
+                // item.departDate = today 会报错 因为不能直接修改vuex的数据 所以上面已经复制了一份
+                data.departDate = today;
+            }//如果大于今天就跳过 不用改
+            
+            //跳转到当前点击的页面
+            this.$router.push({
+                path:'/air/flights',
+                query:data
+            })
+        },
+    }
 }
 </script>
 
