@@ -46,6 +46,7 @@
                 v-for="(item, index) in detail.insurances"
                 :key="index">
                     <el-checkbox 
+                    :checked="false"
                     @change="handleInsurances(item.id)"
                     :label="`${item.type}：￥${item.price}/份×1  最高赔付${item.compensation}`" 
                     border>
@@ -59,11 +60,13 @@
             <div class="contact">
                 <el-form label-width="60px">
                     <el-form-item label="姓名">
-                        <el-input></el-input>
+                        <!-- 联系人的姓名 -->
+                        <el-input v-model="form.contactName"></el-input>
                     </el-form-item>
 
                     <el-form-item label="手机">
-                        <el-input placeholder="请输入内容">
+                        <!-- 手机号码 -->
+                        <el-input placeholder="请输入内容" v-model="form.contactPhone">
                             <template slot="append">
                             <el-button @click="handleSendCaptcha">发送验证码</el-button>
                             </template>
@@ -71,7 +74,8 @@
                     </el-form-item>
 
                     <el-form-item label="验证码">
-                        <el-input></el-input>
+                        <!-- 手机验证码 -->
+                        <el-input v-model="form.captcha"></el-input>
                     </el-form-item>
                 </el-form>   
                 <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
@@ -140,7 +144,15 @@ export default {
         
         // 发送手机验证码
         handleSendCaptcha(){
-            
+            //如果手机号码有填
+            if(this.form.contactPhone){
+                // 调用store user.js里面的action方法来发送手机验证码
+                this.$store.dispatch("user/sendCaptcha",this.form.contactPhone).then(code=>{
+                    this.$message.success("手机验证码发送成功：验证码为：" + code)
+                })
+            }else{
+                this.$message.error("请输入手机号码")
+            }
         },
 
         // 提交订单
