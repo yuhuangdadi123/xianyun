@@ -1,12 +1,16 @@
 <template>
     <div class="main">
         <div class="air-column">
-            <h2>剩机人</h2>
+            <h2>乘机人</h2>
             <el-form class="member-info">
-                <div class="member-info-item" >
-
+                <!-- 乘机人用户列表，根据form.users要循环 -->
+                <div class="member-info-item" 
+                v-for="(item,index) in form.users"
+                :key="index"
+                >
                     <el-form-item label="乘机人类型">
-                        <el-input placeholder="姓名" class="input-with-select">
+                        <!-- 重点注意input -->
+                        <el-input placeholder="姓名" class="input-with-select" v-model="item.username" >
                             <el-select 
                             slot="prepend" 
                             value="1" 
@@ -18,7 +22,7 @@
 
                     <el-form-item label="证件类型">
                         <el-input 
-                        placeholder="证件号码"  class="input-with-select">
+                        placeholder="证件号码"  class="input-with-select" v-model="item.id">
                             <el-select 
                             slot="prepend" 
                             value="1"           
@@ -28,7 +32,7 @@
                         </el-input>
                     </el-form-item>
 
-                    <span class="delete-user" @click="handleDeleteUser()">-</span>
+                    <span class="delete-user" @click="handleDeleteUser(index)">-</span>
                 </div>
             </el-form>
 
@@ -75,15 +79,43 @@
 
 <script>
 export default {
+    data(){
+        return{
+            form:{
+                //用户列表
+                users:[
+                    {username:"",id:""}
+                ],
+                // 保险id
+                insurances:[],
+                // 联系人名字
+                contactName:"",
+                //联系人电话
+                contactPhone:"",
+                // 是否需要发票
+                invoice:false, //默认不要
+                // 座位id
+                seat_xid:"",
+                // 航班id
+                air:"",
+                // 验证码
+                captcha: "",       
+            }
+        }
+    },
+
     methods: {
         // 添加乘机人
         handleAddUsers(){
-            
+            this.form.users.push({
+                username:"",
+                id:""
+            })
         },
         
         // 移除乘机人
-        handleDeleteUser(){
-
+        handleDeleteUser(index){
+            this.form.users.splice(index,1)
         },
         
         // 发送手机验证码
@@ -93,7 +125,7 @@ export default {
 
         // 提交订单
         handleSubmit(){
-            
+            console.log(this.form);
         }
     }
 }
