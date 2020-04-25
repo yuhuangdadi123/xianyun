@@ -5,7 +5,9 @@ export const state = ()=>{
         //选中的机票的详细信息
         flightData:{
             seat_infos: {}
-        }
+        },
+        //一个订单中有多少乘机人
+        FlightUsersLength:""
     }
 }
 
@@ -22,6 +24,9 @@ export const mutations = {
         }
     },
 
+    setFlightUsersLength(state,data){
+        state.FlightUsersLength = data;
+    },
 
     //存储选中的机票的详细信息
     setflightData(state,data){

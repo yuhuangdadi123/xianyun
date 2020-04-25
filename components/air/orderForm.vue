@@ -1,7 +1,7 @@
 <template>
     <div class="main">
         <div class="air-column">
-            <h2>乘机人</h2>
+            <h2>乘机人{{allPrice}}</h2>
             <el-form class="member-info" :rules="rules" ref="form" :model="form">
                 <!-- 乘机人用户列表，根据form.users要循环 -->
                 <div class="member-info-item" 
@@ -83,7 +83,9 @@
                 <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
             </div>
         </div>
+        <!-- <span >{{allPrice}}</span> -->
     </div>
+
 </template>
 
 <script>
@@ -148,7 +150,8 @@ export default {
                     { required: true, message: '请填写联系人' }
                 ],
                 contactPhone: [
-                    { required: true, message: "联系人电话不能为空"}
+                    { required: true, message: "联系人电话不能为空"},
+                    {min:11,max:11,message:"手机号码格式错误"}
                 ],
                 captcha: [
                     { required: true, message: "验证码不能为空"}
@@ -156,7 +159,36 @@ export default {
             }
         }
     },
+    computed:{
+        allPrice(){
+            // 如果请求还没回来，直接返回为0
+            if(!this.detail.seat_infos){
+                return 0;
+            }
+            let price = 0;
+            // 先计算单人的价格
+            price += +this.detail.seat_infos.org_settle_price;
+            price += +this.detail.airport_tax_audlet;
+            //循环获得保险价格 方便日后维护  表单里面的保险 有了就表示已经选中了
+            this.form.insurances.forEach(v=>{
+                //然后再循环后台返回的保险有哪些
+                this.detail.insurances.forEach(item=>{
+                    //循环的是 我提交的 表单里面的 保险那个数组的每一项  比如只选中了第一个保险 数组则是[1] 
+                    //数组里面没有2的那一项就不会进入判断
+                    if(v==item.id){
+                        // 把当前保险的价格加到总价
+                        price += +item.price
+                    }
+                })
+            })
+            // 根据人数价格翻倍
+            price *= +this.form.users.length;
+            // 把乘机人数传给store
+            this.$store.commit("air/setFlightUsersLength",this.form.users.length)
 
+            return price;
+        }
+    },
     mounted(){
         // 获取问号的参数
         const {id , seat_xid} = this.$route.query;
@@ -174,7 +206,7 @@ export default {
             // console.log(res);
             this.detail = res.data;
             // 把详细信息保存到store
-            this.$store.commit("air/setFlightData", this.detail);
+            this.$store.commit("air/setflightData", this.detail);
         })
     },
 
