@@ -256,6 +256,13 @@ export default {
                             data:this.form,
                         }).then(res=>{
                             this.$message.success("订单提交成功")
+                            const {id} = res.data.data;
+                            this.$router.push({
+                                path:"/air/pay",
+                                query:{
+                                    id
+                                }
+                            })
                         })
                     }
                 })
