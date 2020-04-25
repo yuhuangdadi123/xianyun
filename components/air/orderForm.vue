@@ -173,7 +173,8 @@ export default {
         }).then(res=>{
             // console.log(res);
             this.detail = res.data;
-            this.$store.commit("air/setflightData",this.detail)
+            // 把详细信息保存到store
+            this.$store.commit("air/setFlightData", this.detail);
         })
     },
 

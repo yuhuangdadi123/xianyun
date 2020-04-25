@@ -3,7 +3,9 @@ export const state = ()=>{
         //历史查询
         searchList:[],
         //选中的机票的详细信息
-        flightData:{}
+        flightData:{
+            seat_infos: {}
+        }
     }
 }
 
