@@ -2,13 +2,14 @@
     <div class="main">
         <div class="air-column">
             <h2>乘机人</h2>
-            <el-form class="member-info">
+            <el-form class="member-info" :rules="rules" ref="form" :model="form">
                 <!-- 乘机人用户列表，根据form.users要循环 -->
                 <div class="member-info-item" 
                 v-for="(item,index) in form.users"
                 :key="index"
                 >
-                    <el-form-item label="乘机人类型">
+                <el-form-item  prop="users">
+                    <el-form-item label="乘机人类型" >
                         <!-- 重点注意input -->
                         <el-input placeholder="姓名" class="input-with-select" v-model="item.username" >
                             <el-select 
@@ -31,6 +32,7 @@
                             </el-select>
                         </el-input>
                     </el-form-item>
+                </el-form-item>
 
                     <span class="delete-user" @click="handleDeleteUser(index)">-</span>
                 </div>
@@ -58,13 +60,13 @@
         <div class="air-column">
             <h2>联系人</h2>
             <div class="contact">
-                <el-form label-width="60px">
-                    <el-form-item label="姓名">
+                <el-form label-width="80px" :rules="rules" :model="form" ref="form2">
+                    <el-form-item label="姓名" prop="contactName">
                         <!-- 联系人的姓名 -->
                         <el-input v-model="form.contactName"></el-input>
                     </el-form-item>
 
-                    <el-form-item label="手机">
+                    <el-form-item label="手机"  prop="contactPhone">
                         <!-- 手机号码 -->
                         <el-input placeholder="请输入内容" v-model="form.contactPhone">
                             <template slot="append">
@@ -73,7 +75,7 @@
                         </el-input>
                     </el-form-item>
 
-                    <el-form-item label="验证码">
+                    <el-form-item label="验证码" prop="captcha">
                         <!-- 手机验证码 -->
                         <el-input v-model="form.captcha"></el-input>
                     </el-form-item>
@@ -87,6 +89,31 @@
 <script>
 export default {
     data(){
+        //callback 是一个回调函数 且必须调用   value 是输入框的值
+        const validateUsers = (rule, value, callback) => {
+            // 假设验证是通过的， 如果最后的验证通过就调用callback   这是表单验证的valid
+            let valid = true;
+            // v是一个对象,比如{username: "a", id: "123"}
+            value.forEach(v => {
+                // 如果验证有一个不通过，后面的判断就没必要再执行
+                if(valid === false) return;
+                // 如果username是空的
+                if(v.username.trim() === ""){
+                    valid = false;
+                    return callback(new Error("乘机人姓名不能为空"));
+                }
+                // 如果id是空的
+                if(v.id.trim() === ""){
+                    valid = false;
+                    return callback(new Error("乘机人证件号码不能为空"));
+                }
+            })
+            // 如果验证全部通过
+            if(valid){
+                callback();
+            }
+        };
+
         return{
             form:{
                 //用户列表
@@ -109,7 +136,24 @@ export default {
                 captcha: "",       
             },
             // 机票的详细信息
-            detail: {}
+            detail: {},
+            //表单验证
+            rules:{
+                users:[
+                    //自定义验证表单  失去焦点时 调用validateUsers 这个函数
+                    {validator: validateUsers, trigger: 'blur' }
+                ],
+                // 联系人表单
+                contactName: [
+                    { required: true, message: '请填写联系人' }
+                ],
+                contactPhone: [
+                    { required: true, message: "联系人电话不能为空"}
+                ],
+                captcha: [
+                    { required: true, message: "验证码不能为空"}
+                ]
+            }
         }
     },
 
@@ -129,6 +173,7 @@ export default {
         }).then(res=>{
             // console.log(res);
             this.detail = res.data;
+            this.$store.commit("air/setflightData",this.detail)
         })
     },
 
@@ -155,22 +200,29 @@ export default {
                     this.$message.success("手机验证码发送成功：验证码为：" + code)
                 })
             }else{
-                this.$message.error("请输入手机号码")
+                this.$message.error("请输入手机号码");
             }
         },
 
         // 提交订单
         handleSubmit(){
-            // console.log(this.form);
-            this.$axios({
-                url:"/airorders",
-                method:"post",
-                headers:{
-                    Authorization: `Bearer ` + this.$store.state.user.userInfo.token 
-                },
-                data:this.form,
-            }).then(res=>{
-                this.$message.success("订单提交成功")
+        this.$refs.form.validate((valid) => {
+             // 第二个表单
+                this.$refs.form2.validate(valid2 => {
+                    if (valid && valid2) {
+                        // console.log(this.form);
+                        this.$axios({
+                            url:"/airorders",
+                            method:"post",
+                            headers:{
+                                Authorization: `Bearer ` + this.$store.state.user.userInfo.token 
+                            },
+                            data:this.form,
+                        }).then(res=>{
+                            this.$message.success("订单提交成功")
+                        })
+                    }
+                })
             })
         },
 

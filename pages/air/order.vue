@@ -8,7 +8,7 @@
 
             <!-- 侧边栏 -->
             <div class="aside">
-                          
+                <!-- <OrderAside :data="$store.state.air.flightData"/> -->
             </div>
         </el-row>
     </div>
@@ -17,10 +17,18 @@
 <script>
 //购买机票的表单组件
 import OrderForm from "@/components/air/orderForm.vue";
+//机票订单的侧边栏组件 （价格显示）
+import OrderAside from "@/components/air/OrderAside.vue";
 
 export default {
+    data(){
+        return{
+
+        }
+    },
     components: {
-        OrderForm
+        OrderForm,
+        OrderAside
     }
 }
 </script>
