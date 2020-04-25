@@ -2,7 +2,8 @@
     <div class="container">
         <div class="main">
             <div class="pay-title">
-                支付总金额 <span class="pay-price">￥ 1000</span>
+                <!-- Number().toFixed(2) 保留2位小数点 -->
+                支付总金额 <span class="pay-price">￥ {{ Number(detail.price).toFixed(2) }}</span>
             </div>
             <div class="pay-main">
                 <h4>微信支付</h4>
@@ -26,8 +27,36 @@
 </template>
 
 <script>
+import QRcode from "qrcode"
+
 export default {
-    
+    data(){
+        return {
+            // 订单详细信息
+            detail: {}
+        }
+    },
+    mounted(){
+        setTimeout(()=>{
+            this.$axios({
+            url:"/airorders/" + this.$route.query.id,
+            headers: {
+                Authorization: `Bearer ` + this.$store.state.user.userInfo.token
+            }
+        }).then(res=>{
+            // console.log(res);
+            this.detail = res.data;
+            // 根据文档调用toCanvas方法来生成二维码
+            // 文档地址： https://github.com/soldair/node-qrcode#tocanvascanvaselement-text-options-cberror
+            const canvas = document.querySelector("#qrcode-stage");
+            // 第一个参数canvas节点元素
+            // 第二个是生成二维码的链接
+             QRcode.toCanvas(canvas, this.detail.payInfo.code_url, {
+                width: 200
+            })
+        })
+        },0)
+    }
 }
 </script>
 
