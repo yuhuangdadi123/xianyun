@@ -7,7 +7,9 @@ export const state = ()=>{
             seat_infos: {}
         },
         //一个订单中有多少乘机人
-        FlightUsersLength:""
+        FlightUsersLength:0,
+        //总价格
+        allPrice:0
     }
 }
 
@@ -24,6 +26,12 @@ export const mutations = {
         }
     },
 
+    //总价格
+    setAllPrice(state,data){
+        state.allPrice = data;
+    },
+
+    //乘机人数
     setFlightUsersLength(state,data){
         state.FlightUsersLength = data;
     },

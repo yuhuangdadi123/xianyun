@@ -1,7 +1,7 @@
 <template>
     <div class="main">
         <div class="air-column">
-            <h2>乘机人{{allPrice}}</h2>
+            <h2>乘机人</h2>
             <el-form class="member-info" :rules="rules" ref="form" :model="form">
                 <!-- 乘机人用户列表，根据form.users要循环 -->
                 <div class="member-info-item" 
@@ -83,7 +83,7 @@
                 <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
             </div>
         </div>
-        <!-- <span >{{allPrice}}</span> -->
+        <span v-show="false">{{allPrice}}</span>
     </div>
 
 </template>
@@ -185,7 +185,10 @@ export default {
             price *= +this.form.users.length;
             // 把乘机人数传给store
             this.$store.commit("air/setFlightUsersLength",this.form.users.length)
+            // 把allPrice保存到store
+            this.$store.commit("air/setAllPrice", price);
 
+            //computed 记得return
             return price;
         }
     },
